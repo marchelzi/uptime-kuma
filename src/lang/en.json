@@ -943,5 +943,5 @@
     "cellsyntSplitLongMessages": "Split long messages into up to 6 parts. 153 x 6 = 918 characters.",
     "max 15 digits": "max 15 digits",
     "max 11 alphanumeric characters": "max 11 alphanumeric characters",
-    "sourceAddressDescription": "Define the source of IP address for the monitor. By default, the monitor will use the IP address of the Uptime Kuma server.",
+    "sourceAddressDescription": "Define the source of IP address for the monitor. By default, the monitor will use the IP address of the Uptime Kuma server."
 }
