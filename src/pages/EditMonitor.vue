@@ -1394,8 +1394,6 @@ message HealthCheckResponse {
                     ...monitorDefaults
                 };
 
-                console.log("monitorDefaults", monitorDefaults);
-
                 if (this.$root.proxyList && !this.monitor.proxyId) {
                     const proxy = this.$root.proxyList.find(proxy => proxy.default);
 
@@ -1421,7 +1419,6 @@ message HealthCheckResponse {
                         }
 
                         this.monitor = res.monitor;
-                        console.log("monitor", this.monitor);
                         if (this.isClone) {
                             /*
                             * Cloning a monitor will include properties that can not be posted to backend
@@ -1477,7 +1474,6 @@ message HealthCheckResponse {
          * @returns {boolean} Is the form input valid?
          */
         isInputValid() {
-            console.log("validating monitor", this.monitor);
             if (this.monitor.body && (!this.monitor.httpBodyEncoding || this.monitor.httpBodyEncoding === "json")) {
                 try {
                     JSON.parse(this.monitor.body);
@@ -1588,7 +1584,6 @@ message HealthCheckResponse {
                 });
             } else {
                 await this.$refs.tagsManager.submit(this.monitor.id);
-                console.log("submitting monitor", this.monitor.sourceAddress);
                 this.$root.getSocket().emit("editMonitor", this.monitor, (res) => {
                     this.processing = false;
                     this.$root.toastRes(res);
