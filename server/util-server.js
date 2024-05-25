@@ -120,18 +120,19 @@ exports.tcping = function (hostname, port) {
  * Ping the specified machine
  * @param {string} hostname Hostname / address of machine
  * @param {number} size Size of packet to send
+ * @param {string} sourceAddr Source address to use, if any
  * @returns {Promise<number>} Time for ping in ms rounded to nearest integer
  */
-exports.ping = async (hostname, size = 56) => {
+exports.ping = async (hostname, size = 56, sourceAddr = '') => {
     try {
-        return await exports.pingAsync(hostname, false, size);
+        return await exports.pingAsync(hostname, false, size, sourceAddr);
     } catch (e) {
         // If the host cannot be resolved, try again with ipv6
         log.debug("ping", "IPv6 error message: " + e.message);
 
         // As node-ping does not report a specific error for this, try again if it is an empty message with ipv6 no matter what.
         if (!e.message) {
-            return await exports.pingAsync(hostname, true, size);
+            return await exports.pingAsync(hostname, true, size, sourceAddr);
         } else {
             throw e;
         }
@@ -143,15 +144,18 @@ exports.ping = async (hostname, size = 56) => {
  * @param {string} hostname Hostname / address of machine to ping
  * @param {boolean} ipv6 Should IPv6 be used?
  * @param {number} size Size of ping packet to send
+ * @param {string} sourceAddr Source address to use, if any
  * @returns {Promise<number>} Time for ping in ms rounded to nearest integer
  */
-exports.pingAsync = function (hostname, ipv6 = false, size = 56) {
+exports.pingAsync = function (hostname, ipv6 = false, size = 56, sourceAddr = "") {
     return new Promise((resolve, reject) => {
         ping.promise.probe(hostname, {
             v6: ipv6,
             min_reply: 1,
             deadline: 10,
             packetSize: size,
+            sourceAddr: sourceAddr
+
         }).then((res) => {
             // If ping failed, it will set field to unknown
             if (res.alive) {
@@ -293,7 +297,7 @@ exports.dnsResolve = function (hostname, resolverServer, resolverPort, rrtype) {
     // Remove brackets from IPv6 addresses so we can re-add them to
     // prevent issues with ::1:5300 (::1 port 5300)
     resolverServer = resolverServer.replace("[", "").replace("]", "");
-    resolver.setServers([ `[${resolverServer}]:${resolverPort}` ]);
+    resolver.setServers([`[${resolverServer}]:${resolverPort}`]);
     return new Promise((resolve, reject) => {
         if (rrtype === "PTR") {
             resolver.reverse(hostname, (err, records) => {
@@ -463,16 +467,16 @@ exports.radius = function (
         hostPort: port,
         timeout: timeout,
         retries: 1,
-        dictionaries: [ file ],
+        dictionaries: [file],
     });
 
     return client.accessRequest({
         secret: secret,
         attributes: [
-            [ attributes.USER_NAME, username ],
-            [ attributes.USER_PASSWORD, password ],
-            [ attributes.CALLING_STATION_ID, callingStationId ],
-            [ attributes.CALLED_STATION_ID, calledStationId ],
+            [attributes.USER_NAME, username],
+            [attributes.USER_PASSWORD, password],
+            [attributes.CALLING_STATION_ID, callingStationId],
+            [attributes.CALLED_STATION_ID, calledStationId],
         ],
     }).catch((error) => {
         if (error.response?.code) {

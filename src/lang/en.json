@@ -80,7 +80,7 @@
     "resendDisabled": "Resend disabled",
     "retriesDescription": "Maximum retries before the service is marked as down and a notification is sent",
     "ignoreTLSError": "Ignore TLS/SSL errors for HTTPS websites",
-	  "ignoreTLSErrorGeneral": "Ignore TLS/SSL error for connection",
+    "ignoreTLSErrorGeneral": "Ignore TLS/SSL error for connection",
     "upsideDownModeDescription": "Flip the status upside down. If the service is reachable, it is DOWN.",
     "maxRedirectDescription": "Maximum number of redirects to follow. Set to 0 to disable redirects.",
     "Upside Down Mode": "Upside Down Mode",
@@ -942,5 +942,6 @@
     "Allow Long SMS": "Allow Long SMS",
     "cellsyntSplitLongMessages": "Split long messages into up to 6 parts. 153 x 6 = 918 characters.",
     "max 15 digits": "max 15 digits",
-    "max 11 alphanumeric characters": "max 11 alphanumeric characters"
+    "max 11 alphanumeric characters": "max 11 alphanumeric characters",
+    "sourceAddressDescription": "Define the source of IP address for the monitor. By default, the monitor will use the IP address of the Uptime Kuma server.",
 }

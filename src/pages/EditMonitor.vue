@@ -498,6 +498,14 @@
                                 <input id="resend-interval" v-model="monitor.resendInterval" type="number" class="form-control" required min="0" step="1">
                             </div>
 
+                            <div v-if="monitor.type === 'ping'" class="my-3">
+                                <label for="source-address" class="form-label">{{ $t("Source Address") }}</label>
+                                <input id="source-address" v-model="monitor.sourceAddress" type="text" class="form-control">
+                                <div class="form-text">
+                                    {{ $t("sourceAddressDescription") }}
+                                </div>
+
+                            </div>
                             <h2 v-if="monitor.type !== 'push'" class="mt-5 mb-2">{{ $t("Advanced") }}</h2>
 
                             <div v-if="monitor.type === 'http' || monitor.type === 'keyword' || monitor.type === 'json-query' " class="my-3 form-check">
@@ -974,7 +982,8 @@ const monitorDefaults = {
     kafkaProducerSsl: false,
     kafkaProducerAllowAutoTopicCreation: false,
     gamedigGivenPortOnly: true,
-    remote_browser: null
+    remote_browser: null,
+    sourceAddress: ""
 };
 
 export default {
@@ -1385,6 +1394,8 @@ message HealthCheckResponse {
                     ...monitorDefaults
                 };
 
+                console.log("monitorDefaults", monitorDefaults);
+
                 if (this.$root.proxyList && !this.monitor.proxyId) {
                     const proxy = this.$root.proxyList.find(proxy => proxy.default);
 
@@ -1410,7 +1421,7 @@ message HealthCheckResponse {
                         }
 
                         this.monitor = res.monitor;
-
+                        console.log("monitor", this.monitor);
                         if (this.isClone) {
                             /*
                             * Cloning a monitor will include properties that can not be posted to backend
@@ -1466,6 +1477,7 @@ message HealthCheckResponse {
          * @returns {boolean} Is the form input valid?
          */
         isInputValid() {
+            console.log("validating monitor", this.monitor);
             if (this.monitor.body && (!this.monitor.httpBodyEncoding || this.monitor.httpBodyEncoding === "json")) {
                 try {
                     JSON.parse(this.monitor.body);
@@ -1488,6 +1500,8 @@ message HealthCheckResponse {
                     return false;
                 }
             }
+
+
             return true;
         },
 
@@ -1502,7 +1516,6 @@ message HealthCheckResponse {
         async submit() {
 
             this.processing = true;
-
             if (!this.isInputValid()) {
                 this.processing = false;
                 return;
@@ -1575,7 +1588,7 @@ message HealthCheckResponse {
                 });
             } else {
                 await this.$refs.tagsManager.submit(this.monitor.id);
-
+                console.log("submitting monitor", this.monitor.sourceAddress);
                 this.$root.getSocket().emit("editMonitor", this.monitor, (res) => {
                     this.processing = false;
                     this.$root.toastRes(res);
